@@ -1155,6 +1155,114 @@
             .history-actions { opacity: 1; }
             .record-btn { width: 60px; height: 60px; }
         }
+
+        /* ===== V3: Voice Design ===== */
+        .design-section { animation: fadeIn 0.3s ease; }
+
+        /* Preset Library */
+        .preset-section { margin-top: 16px; }
+        .preset-tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 16px;
+            background: var(--bg-tertiary);
+            padding: 3px;
+            border-radius: var(--radius-sm);
+        }
+        .preset-tab {
+            flex: 1;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            background: transparent;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .preset-tab:hover { color: var(--text-primary); }
+        .preset-tab.active {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            box-shadow: var(--shadow-soft);
+        }
+        .preset-tab svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+        .preset-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .preset-card {
+            padding: 14px;
+            background: var(--bg-tertiary);
+            border: 1px solid transparent;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            -webkit-tap-highlight-color: transparent;
+        }
+        .preset-card:hover {
+            background: var(--bg-secondary);
+            border-color: var(--border-medium);
+            transform: translateY(-1px);
+        }
+        .preset-card.active {
+            background: var(--accent-light);
+            border-color: var(--accent-primary);
+        }
+        .preset-card-icon {
+            font-size: 20px;
+            margin-bottom: 6px;
+            display: block;
+        }
+        .preset-card-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+        .preset-card-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .preset-section-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .design-tips {
+            margin-top: 16px;
+            padding: 14px;
+            background: var(--accent-light);
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        .design-tips strong { color: var(--text-primary); }
+
+        @media (max-width: 640px) {
+            .preset-grid { grid-template-columns: 1fr; }
+            .preset-card { padding: 12px; }
+        }
     </style>
 </head>
 <body>
@@ -1215,7 +1323,7 @@
         </div>
 
         <!-- Voice Clone -->
-        <div class="card">
+        <div class="card" id="cloneCard">
             <div class="card-title">
                 <svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
                 声音克隆
@@ -1224,6 +1332,10 @@
                 <button class="mode-btn active" data-mode="standard" onclick="switchMode('standard')">
                     <svg viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
                     标准合成
+                </button>
+                <button class="mode-btn" data-mode="design" onclick="switchMode('design')">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path></svg>
+                    音色设计
                 </button>
                 <button class="mode-btn" data-mode="clone" onclick="switchMode('clone')">
                     <svg viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
@@ -1312,6 +1424,28 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Voice Design -->
+            <div id="designSection" style="display: none;">
+                <div class="design-section">
+                    <div class="preset-section">
+                        <div class="preset-tabs">
+                            <button class="preset-tab active" data-category="celebrity" onclick="switchPresetTab('celebrity')">🌟 名人模板</button>
+                            <button class="preset-tab" data-category="character" onclick="switchPresetTab('character')">🎭 角色模板</button>
+                            <button class="preset-tab" data-category="style" onclick="switchPresetTab('style')">🎨 风格模板</button>
+                        </div>
+                        <div id="presetGrid" class="preset-grid"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>音色描述 <span class="required">*</span></label>
+                        <textarea id="voiceDescription" placeholder="描述你想要的音色特点，越具体越好，例如：&#10;&#10;低沉磁性的中年男声，略带沙哑感，语速缓慢，声音厚实稳重，给人安全感和权威感，适合讲述故事或严肃话题" rows="5"></textarea>
+                    </div>
+                    <div class="design-tips">
+                        <strong>💡 描述技巧：</strong> 从声线（低沉/清亮）、语速（快/慢）、音调（高/低）、情感（温柔/活泼/庄重）、口音（方言/标准）、年龄感（年轻/成熟/苍老）等多个维度描述，效果更好。<br>
+                        <strong>🎯 随机灵感：</strong> 点击上面的预设模板快速填充音色描述，也可自行修改。
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Synthesis History -->
@@ -1384,6 +1518,14 @@
                     <label>音色</label>
                     <select id="voice">
                         <option value="mimo_default">mimo_default</option>
+                        <option value="冰糖">冰糖</option>
+                        <option value="茉莉">茉莉</option>
+                        <option value="苏打">苏打</option>
+                        <option value="白桦">白桦</option>
+                        <option value="Mia">Mia</option>
+                        <option value="Chloe">Chloe</option>
+                        <option value="Milo">Milo</option>
+                        <option value="Dean">Dean</option>
                     </select>
                 </div>
                 <div class="form-group" style="margin-bottom: 0;">
@@ -1507,6 +1649,36 @@
         // Waveform
         let waveformAudioContext = null;
 
+        // ===== Voice Presets =====
+        const voicePresets = {
+            celebrity: [
+                { id: 'zhouxingchi', name: '周星驰', icon: '🎭', desc: '幽默夸张的喜剧男声，语速快，语调起伏大，带粤语口音', prompt: '幽默夸张的喜剧男声，语速较快，语调起伏很大，带有明显的粤语口音特色，说话充满无厘头风格和喜剧节奏感，声音有辨识度，给人欢乐搞笑的感觉' },
+                { id: 'leijun', name: '雷军', icon: '👔', desc: '沉稳有力的中年男声，演讲式发音，带湖北口音', prompt: '沉稳有力的中年男声，语调自信笃定，略带湖北口音，演讲式发音，字正腔圆中带方言尾音，有科技产品发布会的主讲人感觉' },
+                { id: 'linzhiling', name: '林志玲', icon: '💃', desc: '甜美温柔的台湾腔女声，声音高挑有磁性', prompt: '甜美温柔的台湾腔女声，声音高挑有磁性，语速舒缓，尾音轻柔上扬，充满亲切感和优雅气质，发音清晰温柔' },
+                { id: 'guodegang', name: '郭德纲', icon: '🎪', desc: '浑厚圆润的相声男声，京腔浓郁，幽默调侃', prompt: '浑厚圆润的相声男声，京腔浓郁，语速张弛有度，带着调侃和幽默感，声音有辨识度，说话节奏感强，让人忍俊不禁' },
+                { id: 'luoyonghao', name: '罗永浩', icon: '🎯', desc: '略带沙哑的中年男声，语调认真执着', prompt: '略带沙哑感的中年男声，语速中等偏慢，语调认真执着，带理想主义者的坚定感，说话有说服力和感染力' }
+            ],
+            character: [
+                { id: 'gentle_narrator', name: '温柔旁白', icon: '📖', desc: '温暖柔和的叙述声，适合睡前故事', prompt: '温暖柔和的叙述声，语速平缓，音色中低频丰富，给人舒适安心的感觉，气息轻柔绵长，适合讲述故事或夜间陪伴' },
+                { id: 'news_anchor', name: '新闻主播', icon: '📺', desc: '标准播音腔，吐字清晰，音色专业', prompt: '标准播音腔，吐字清晰有力，语速适中，音色稳重专业，不带个人感情色彩，有权威感和可信度，适合播报新闻' },
+                { id: 'cute_girl', name: '可爱少女', icon: '🌸', desc: '活泼甜美的年轻女声，亲切有活力', prompt: '活泼甜美的年轻女声，音调偏高，语速稍快，语气充满活力和亲切感，像邻家女孩一样可爱，声音清脆动人' },
+                { id: 'deep_uncle', name: '深沉大叔', icon: '🧔', desc: '低沉磁性的男声，厚实稳重有安全感', prompt: '低沉磁性的男声，语速缓慢，声音厚实稳重，有安全感和权威感，适合讲述严肃话题或扮演长辈角色' },
+                { id: 'elegant_sister', name: '知性姐姐', icon: '👩', desc: '温婉知性的成熟女声，亲切有引导感', prompt: '温婉知性的成熟女声，语速舒缓，音色柔和亲切，带引导感和教育感，适合知识分享或教学类内容' },
+                { id: 'customer_service', name: '客服代表', icon: '🎧', desc: '标准普通话女声，礼貌温和有职业感', prompt: '标准普通话女声，语速适中，发音清晰标准，语气礼貌温和带微笑感，有职业素养和服务意识' },
+                { id: 'hot_blood', name: '热血少年', icon: '🔥', desc: '充满朝气的年轻男声，情感饱满激昂', prompt: '充满朝气的年轻男声，音调偏高亢，语速较快，情感饱满激昂，有动漫配音感，充满青春热血' },
+                { id: 'night_radio', name: '深夜电台', icon: '🌙', desc: '温暖低沉的男声，有故事感和陪伴感', prompt: '温暖低沉的男声，语速很慢，音色柔和带轻微沙哑感，有故事感和陪伴感，适合深夜收听的情感节目' }
+            ],
+            style: [
+                { id: 'deep_magnetic', name: '低沉磁性', icon: '🎵', desc: '低沉的男声，厚实有磁性，适合深情内容', prompt: '低沉的男声，声音厚实有磁性，共鸣感强，语速中等偏慢，适合演绎深情内容或情感独白' },
+                { id: 'cute_lively', name: '活泼可爱', icon: '✨', desc: '清脆活泼的声音，充满朝气和感染力', prompt: '清脆活泼的声音，音调较高，语速较快，充满朝气和感染力，适合欢快轻松的内容' },
+                { id: 'gentle_soothing', name: '温柔舒缓', icon: '🌊', desc: '柔和舒缓的声音，适合助眠放松', prompt: '柔和舒缓的声音，语速慢，音色温暖，气息轻柔有韵律，适合助眠、冥想或放松类内容' },
+                { id: 'formal_dignified', name: '正式庄重', icon: '🏛️', desc: '稳重庄重的声音，适合正式场合', prompt: '稳重庄重的声音，吐字清晰有力，节奏稳定，音色端正大气，适合正式场合发言或宣读重要内容' },
+                { id: 'mystical_ethereal', name: '神秘空灵', icon: '🌌', desc: '空灵缥缈的声音，适合奇幻内容', prompt: '空灵缥缈的声音，语速极慢，音量偏小，带回声感和距离感，适合奇幻、科幻或神秘氛围内容' },
+                { id: 'natural_friendly', name: '亲切自然', icon: '☀️', desc: '自然随和的声音，如日常聊天', prompt: '自然随和的声音，就像日常聊天一样，语速正常，音色真实不造作，有真人对话的自然亲切感' },
+                { id: 'majestic_powerful', name: '威严霸气', icon: '👑', desc: '浑厚有力的声音，有王者风范', prompt: '浑厚有力的声音，音量偏大，语速较慢但有力顿挫，有王者风范和不容置疑的权威感，气场强大' }
+            ]
+        };
+
         // ===== Init =====
         window.onload = function() {
             const savedKey = localStorage.getItem('mimo_api_key');
@@ -1539,6 +1711,7 @@
             // Load profiles & history
             renderProfiles();
             renderHistory();
+            renderPresets('celebrity');
 
             // Audio player waveform
             const player = document.getElementById('audioPlayer');
@@ -1552,10 +1725,55 @@
             document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
             document.querySelector(`.mode-btn[data-mode="${mode}"]`).classList.add('active');
 
+            document.getElementById('designSection').style.display = mode === 'design' ? 'block' : 'none';
             document.getElementById('cloneSection').style.display = mode === 'clone' ? 'block' : 'none';
-            document.getElementById('styleGroup').style.display = mode === 'clone' ? 'none' : 'block';
-            document.getElementById('voiceGroup').style.display = mode === 'clone' ? 'none' : 'block';
-            document.getElementById('tipsSection').style.display = mode === 'clone' ? 'none' : 'block';
+            document.getElementById('styleGroup').style.display = mode === 'standard' ? 'block' : 'none';
+            document.getElementById('voiceGroup').style.display = mode === 'standard' ? 'block' : 'none';
+            document.getElementById('tipsSection').style.display = mode === 'standard' ? 'block' : 'none';
+            document.querySelector('#cloneCard .card-title').textContent = mode === 'standard' ? '标准合成' : (mode === 'design' ? '音色设计' : '声音克隆');
+            if (mode === 'design') renderPresets('celebrity');
+        }
+
+        // ===== Voice Design Presets =====
+        let currentPresetCategory = 'celebrity';
+
+        function switchPresetTab(category) {
+            currentPresetCategory = category;
+            document.querySelectorAll('.preset-tab').forEach(b => b.classList.remove('active'));
+            document.querySelector(`.preset-tab[data-category="${category}"]`).classList.add('active');
+            renderPresets(category);
+        }
+
+        function renderPresets(category) {
+            const grid = document.getElementById('presetGrid');
+            const presets = voicePresets[category] || [];
+            grid.innerHTML = presets.map(p => `
+                <div class="preset-card" data-id="${p.id}" onclick="selectPreset('${p.id}')">
+                    <span class="preset-card-icon">${p.icon}</span>
+                    <div class="preset-card-name">${p.name}</div>
+                    <div class="preset-card-desc">${escapeHtml(p.desc)}</div>
+                </div>
+            `).join('');
+        }
+
+        function selectPreset(id) {
+            // Find preset across all categories
+            let preset = null;
+            for (const cat of Object.values(voicePresets)) {
+                preset = cat.find(p => p.id === id);
+                if (preset) break;
+            }
+            if (!preset) return;
+
+            // Highlight
+            document.querySelectorAll('.preset-card').forEach(c => c.classList.remove('active'));
+            const card = document.querySelector(`.preset-card[data-id="${id}"]`);
+            if (card) card.classList.add('active');
+
+            // Fill description
+            const descEl = document.getElementById('voiceDescription');
+            descEl.value = preset.prompt;
+            descEl.focus();
         }
 
         // ===== Clone Source Switch =====
@@ -1815,13 +2033,15 @@
         }
 
         function addHistoryEntry(text, mode, audioBase64, format) {
-            let voiceName = mode === 'standard' ? '标准音色' : '克隆音色';
+            let voiceName = mode === 'standard' ? '标准音色' : (mode === 'design' ? '音色设计' : '克隆音色');
+            const voiceDesc = mode === 'design' ? document.getElementById('voiceDescription').value.trim().substring(0, 100) : '';
             const history = getHistory();
             const entry = {
                 id: Date.now().toString(),
                 text: text.substring(0, 200),
                 mode: mode,
                 voiceName: voiceName,
+                voiceDesc: voiceDesc,
                 audioBase64: audioBase64,
                 format: format,
                 createdAt: Date.now()
@@ -1891,7 +2111,8 @@
                         <div class="history-body">
                             <div class="history-text">${escapeHtml(e.text)}</div>
                             <div class="history-meta">
-                                <span>${e.mode === 'clone' ? '🎙️ 克隆' : '🔊 标准'}</span>
+                                <span>${e.mode === 'clone' ? '🎙️ 克隆' : (e.mode === 'design' ? '🎨 设计' : '🔊 标准')}</span>
+                                ${e.voiceDesc ? `<span>${escapeHtml(e.voiceDesc)}</span>` : ''}
                                 <span>${formatDate(e.createdAt)}</span>
                             </div>
                         </div>
@@ -2013,6 +2234,10 @@
             if (currentMode === 'clone' && !clonedAudioBase64) {
                 showError('请先录制或上传参考音频'); return;
             }
+            if (currentMode === 'design') {
+                const desc = document.getElementById('voiceDescription').value.trim();
+                if (!desc) { showError('请输入音色描述'); return; }
+            }
 
             // Save API key
             if (document.getElementById('saveApiKey').checked) {
@@ -2032,6 +2257,12 @@
                 model = "mimo-v2.5-tts-voiceclone";
                 audioConfig = { format: format, voice: clonedAudioBase64 };
                 messages.push({ role: "assistant", content: finalMessage });
+            } else if (currentMode === 'design') {
+                model = "mimo-v2.5-tts-voicedesign";
+                const voiceDesc = document.getElementById('voiceDescription').value.trim();
+                messages.push({ role: "user", content: voiceDesc });
+                messages.push({ role: "assistant", content: finalMessage });
+                audioConfig = { format: format };
             } else {
                 model = "mimo-v2-tts";
                 const activeStyles = Array.from(document.querySelectorAll('.tag.active')).map(t => t.dataset.style);
@@ -2200,6 +2431,8 @@
             document.getElementById('assistantMessage').value = '';
             document.getElementById('voice').value = 'mimo_default';
             document.getElementById('audioFormat').value = 'wav';
+            document.getElementById('voiceDescription').value = '';
+            document.querySelectorAll('.preset-card').forEach(c => c.classList.remove('active'));
             removeFile();
             removeRecording();
         }
