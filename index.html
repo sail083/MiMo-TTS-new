@@ -14,19 +14,19 @@
         }
 
         :root {
-            --bg-primary: #faf9f7;
+            --bg-primary: #f0f5f4;
             --bg-secondary: #ffffff;
-            --bg-tertiary: #f5f4f2;
-            --text-primary: #2d2a26;
-            --text-secondary: #6b6560;
-            --text-muted: #9a9590;
-            --accent-primary: #b8a9c9;
-            --accent-secondary: #d4c4e0;
-            --accent-light: #e8e0f0;
-            --border-light: #e8e6e3;
-            --border-medium: #d5d2ce;
-            --shadow-soft: 0 2px 12px rgba(45, 42, 38, 0.04);
-            --shadow-medium: 0 4px 20px rgba(45, 42, 38, 0.06);
+            --bg-tertiary: #f3f8f7;
+            --text-primary: #1a2e2b;
+            --text-secondary: #5a6e6b;
+            --text-muted: #8a9e9b;
+            --accent-primary: #0d9488;
+            --accent-secondary: #14b8a6;
+            --accent-light: #ccfbf1;
+            --border-light: #e0eae8;
+            --border-medium: #c5d5d2;
+            --shadow-soft: 0 2px 12px rgba(26, 46, 43, 0.04);
+            --shadow-medium: 0 4px 20px rgba(26, 46, 43, 0.08);
             --radius-sm: 8px;
             --radius-md: 12px;
             --radius-lg: 16px;
@@ -60,10 +60,9 @@
         }
 
         .container {
-            max-width: 720px;
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 40px 20px;
-            animation: fadeIn 0.6s ease;
+            padding: 32px 20px;
         }
 
         /* Header */
@@ -351,9 +350,8 @@
 
         /* Results */
         .result-card {
-            background: linear-gradient(135deg, #f5f0f7 0%, #faf8fb 100%);
+            background: linear-gradient(135deg, #f0fdfa 0%, #f0f9f7 100%);
             border: 1px solid var(--accent-light);
-            animation: slideUp 0.6s ease 0.3s both;
         }
 
         .audio-player {
@@ -557,9 +555,89 @@
             }
         }
 
-        @media (min-width: 1024px) {
+        /* Default layout (stacked, below 900px) */
+        .layout-wrap {
+            display: block;
+        }
+        .left-panel {
+            margin-bottom: 8px;
+        }
+        .right-panel {
+            padding-top: 8px;
+            border-top: 2px solid var(--accent-light);
+        }
+
+        @media (min-width: 900px) {
             .container {
-                max-width: 800px;
+                max-width: 1280px;
+                padding: 24px 28px;
+            }
+            .layout-wrap {
+                display: flex;
+                gap: 24px;
+                align-items: flex-start;
+            }
+            .left-panel {
+                flex: 1;
+                min-width: 0;
+                max-height: calc(100vh - 48px);
+                overflow-y: auto;
+                padding-right: 4px;
+                margin-bottom: 0;
+            }
+            .right-panel {
+                width: 400px;
+                flex-shrink: 0;
+                position: sticky;
+                top: 24px;
+                max-height: calc(100vh - 48px);
+                overflow-y: auto;
+                border-top: none;
+                padding-top: 0;
+            }
+            /* Hide scrollbar for panels */
+            .left-panel::-webkit-scrollbar,
+            .right-panel::-webkit-scrollbar {
+                width: 4px;
+            }
+            .left-panel::-webkit-scrollbar-track,
+            .right-panel::-webkit-scrollbar-track {
+                background: transparent;
+            }
+            .left-panel::-webkit-scrollbar-thumb,
+            .right-panel::-webkit-scrollbar-thumb {
+                background-color: var(--border-medium);
+                border-radius: 20px;
+            }
+        }
+
+        /* Panel animations */
+        .left-panel { animation: fadeIn 0.5s ease; }
+        .right-panel { animation: fadeIn 0.5s ease 0.15s both; }
+
+        /* Card accent on hover */
+        .card {
+            border-left: 3px solid transparent;
+            transition: border-color var(--transition-fast), box-shadow var(--transition-smooth), transform var(--transition-smooth);
+        }
+        .card:hover {
+            border-left-color: var(--accent-primary);
+        }
+
+        /* Sticky generate button on desktop */
+        @media (min-width: 900px) {
+            .btn-primary {
+                position: sticky;
+                bottom: 0;
+                z-index: 10;
+                box-shadow: 0 -8px 16px rgba(240, 245, 244, 0.9);
+                border-radius: var(--radius-md) var(--radius-md) 0 0;
+            }
+            .header {
+                margin-bottom: 24px;
+            }
+            .header h1 {
+                font-size: 26px;
             }
         }
 
@@ -1061,7 +1139,7 @@
             top: 0; left: 0;
             width: 0;
             height: 100%;
-            background: rgba(184, 169, 201, 0.15);
+            background: rgba(13, 148, 136, 0.1);
             pointer-events: none;
             transition: width 0.1s linear;
         }
@@ -1267,6 +1345,8 @@
 </head>
 <body>
     <div class="container">
+        <div class="layout-wrap">
+        <div class="left-panel">
         <header class="header">
             <h1>MiMo TTS</h1>
             <p>极简语音合成体验</p>
@@ -1448,6 +1528,9 @@
             </div>
         </div>
 
+        </div><!-- /left-panel -->
+        <div class="right-panel">
+
         <!-- Synthesis History -->
         <div class="card">
             <div class="card-title">
@@ -1627,10 +1710,14 @@
         </div>
     </div>
 
+        </div><!-- /right-panel -->
+        </div><!-- /layout-wrap -->
+
     <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="spinner"></div>
         <div class="loading-text">正在生成语音...</div>
+    </div>
     </div>
 
     <script>
@@ -2166,11 +2253,11 @@
             ctx.clearRect(0, 0, w, h);
 
             // Background
-            ctx.fillStyle = 'var(--bg-tertiary, #f5f4f2)';
+            ctx.fillStyle = 'var(--bg-tertiary, #f3f8f7)';
             ctx.fillRect(0, 0, w, h);
 
             // Waveform
-            ctx.strokeStyle = 'var(--accent-primary, #b8a9c9)';
+            ctx.strokeStyle = 'var(--accent-primary, #0d9488)';
             ctx.lineWidth = 2;
             ctx.beginPath();
 
@@ -2192,7 +2279,7 @@
                 ctx.lineTo(x, y);
             }
             ctx.closePath();
-            ctx.fillStyle = 'var(--accent-light, #e8e0f0)';
+            ctx.fillStyle = 'var(--accent-light, #ccfbf1)';
             ctx.fill();
         }
 
